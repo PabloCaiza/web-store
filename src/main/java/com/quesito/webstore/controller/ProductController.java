@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,8 +67,9 @@ public class ProductController {
         return "product";
     }
     @RequestMapping(value = "/products/add",method = RequestMethod.GET)
-    public String getAddNewProductForm(Model model){
+    public String getAddNewProductForm(Model model, HttpServletRequest request){
         model.addAttribute("newProduct",new Product());
+        System.out.println(request);
         return "addProduct";
     }
 
@@ -90,30 +92,29 @@ public class ProductController {
 //        return  "redirect:/market/products";
 //    }
 
-//    @RequestMapping(value = "/products/add",method = RequestMethod.POST )
-//    public String processAddNewProductForm(@ModelAttribute("newProduct") Product product,BindingResult result) throws IOException {
-//        String[] suppressedFields = result.getSuppressedFields();
-//        if (suppressedFields.length > 0) {
-//            throw new RuntimeException("Attempting to bind disallowed fields: " + StringUtils.arrayToCommaDelimitedString(suppressedFields));
-//        }
-//
-//        MultipartFile multipartFile=product.getProductImage();
-//        String rootPath = servletContext.getRealPath("/");
-//        String path = String.format("%sresources\\images", rootPath);
-//        System.out.println(path);
-//
-//        Files.copy(multipartFile.getInputStream(),
-//                new File(path,product.getProductId()+".png").toPath(),
-//                StandardCopyOption.REPLACE_EXISTING);
-//        System.out.println("**************");
-//        productService.addProduct(product);
-//        return  "redirect:/market/products";
-//    }
+    @RequestMapping(value = "/products/add",method = RequestMethod.POST )
+    public String processAddNewProductForm(@ModelAttribute("newProduct") Product product,BindingResult result) throws IOException {
+        String[] suppressedFields = result.getSuppressedFields();
+        if (suppressedFields.length > 0) {
+            throw new RuntimeException("Attempting to bind disallowed fields: " + StringUtils.arrayToCommaDelimitedString(suppressedFields));
+        }
+
+        MultipartFile multipartFile=product.getProductImage();
+        String rootPath = servletContext.getRealPath("/");
+        String path = String.format("%sresources\\images", rootPath);
+        System.out.println(path);
+
+        Files.copy(multipartFile.getInputStream(),
+                new File(path,product.getProductId()+".png").toPath(),
+                StandardCopyOption.REPLACE_EXISTING);
+        System.out.println("**************");
+        productService.addProduct(product);
+        return  "redirect:/market/products";
+    }
 
 
     @RequestMapping(value = "/products/{id}/image",method = RequestMethod.GET)
     public ResponseEntity<byte[]> getProductImage(@PathVariable("id") String id) throws IOException {
-
         String path = String.format("/WEB-INF/images/%s.jpg",id);
         System.out.println(path);
 
