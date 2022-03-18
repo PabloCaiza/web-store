@@ -34,6 +34,10 @@ dependencies {
     implementation 'javax.xml:jaxb-impl:2.1'
     implementation 'javax.activation:activation:1.1'
     implementation 'log4j:log4j:1.2.12'
+    implementation 'org.springframework.security:spring-security-config:4.1.1.RELEASE'
+    implementation 'org.springframework.security:spring-security-web:4.1.1.RELEASE'
+    implementation 'org.springframework.security:spring-security-core:4.1.1.RELEASE'
+
 
 
 
