@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -93,7 +94,8 @@ public class ProductController {
 //    }
 
     @RequestMapping(value = "/products/add",method = RequestMethod.POST )
-    public String processAddNewProductForm(@ModelAttribute("newProduct") Product product,BindingResult result) throws IOException {
+    public String processAddNewProductForm(
+            @ModelAttribute("newProduct") @Valid Product product, BindingResult result) throws IOException {
         String[] suppressedFields = result.getSuppressedFields();
         if (suppressedFields.length > 0) {
             throw new RuntimeException("Attempting to bind disallowed fields: " + StringUtils.arrayToCommaDelimitedString(suppressedFields));
@@ -108,6 +110,7 @@ public class ProductController {
                 new File(path,product.getProductId()+".png").toPath(),
                 StandardCopyOption.REPLACE_EXISTING);
         System.out.println("**************");
+        if(result.hasErrors()) { return "addProduct"; }
         productService.addProduct(product);
         return  "redirect:/market/products";
     }

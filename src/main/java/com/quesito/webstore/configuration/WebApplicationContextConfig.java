@@ -12,6 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
@@ -125,7 +127,14 @@ public class WebApplicationContextConfig extends WebMvcConfigurerAdapter {
         sessionLocaleResolver.setDefaultLocale(Locale.ENGLISH);
         return  sessionLocaleResolver;
     }
+    public Validator validator(){
+        LocalValidatorFactoryBean bean=new LocalValidatorFactoryBean();
+        bean.setValidationMessageSource(messageSource());
+        return bean;
+    }
 
-    
-    
+    @Override
+    public Validator getValidator() {
+        return validator();
+    }
 }
